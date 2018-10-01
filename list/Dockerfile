@@ -1,11 +1,10 @@
-FROM golang
-MAINTAINER Karthik Gaekwad
-
-RUN go get github.com/prometheus/client_golang/prometheus
-RUN go get github.com/prometheus/client_golang/prometheus/promhttp
-RUN go get github.com/gorilla/mux
-COPY . /go/src/github.com/karthequian/wishlist
-WORKDIR /go/src/github.com/karthequian/wishlist/list
-RUN go get && go build -o /bin/list
-
-ENTRYPOINT ["/bin/list"]
+# iron/go:dev is the alpine image with the go tools added
+FROM iron/go:dev
+WORKDIR /app
+# Set an env var that matches your github repo name, replace treeder/dockergo here with your repo name
+ENV SRC_DIR=/go/src/github.com/treeder/dockergo/
+# Add the source code:
+ADD . $SRC_DIR
+# Build it:
+RUN cd $SRC_DIR; go build -o myapp; cp myapp /app/
+ENTRYPOINT ["./myapp"]
